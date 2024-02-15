@@ -33,9 +33,11 @@ jobs:
         wget -q "https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip" -O android-sdk-tools.zip
         unzip -q android-sdk-tools.zip -d $HOME/android-sdk-tools
         export ANDROID_SDK_ROOT=$HOME/android-sdk-tools
+        export ANDROID_HOME=$HOME/android-sdk-tools  # Set ANDROID_HOME
 
     - name: Accept Android SDK licenses
-      run: yes | $ANDROID_SDK_ROOT/cmdline-tools/bin/sdkmanager --licenses
+      run: |
+        yes | $ANDROID_SDK_ROOT/cmdline-tools/bin/sdkmanager --licenses
 
     - name: Build Android app with Buildozer
       run: |
