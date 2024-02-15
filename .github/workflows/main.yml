@@ -31,7 +31,7 @@ jobs:
 
     - name: Build Android app
       run: |
-        briefcase dev .
+        briefcase dev
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v3
