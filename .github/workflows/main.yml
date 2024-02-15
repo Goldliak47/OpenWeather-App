@@ -50,7 +50,7 @@ jobs:
       with:
         files: |
           output/android/*.apk
-        token: ${{ secrets.GH_TOKEN }}
+        token: ${{ secrets.GH }}
         body: |
           Release notes go here. You can customize this section.
         draft: false
