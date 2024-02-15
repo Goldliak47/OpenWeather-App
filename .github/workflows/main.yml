@@ -22,8 +22,21 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y python3-dev  # Install Python development headers
+        sudo apt-get install -y build-essential  # Install essential build tools
+        sudo apt-get install -y autoconf automake ant openjdk-8-jdk  # Install other required build tools
         pip install buildozer
-        pip install cython
+        pip install cython  # Install Cython
+
+    - name: Set up Android SDK
+      run: |
+        mkdir -p $HOME/.android && touch $HOME/.android/repositories.cfg
+        wget -q "https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip" -O android-sdk-tools.zip
+        unzip -q android-sdk-tools.zip -d $HOME/android-sdk-tools
+        export ANDROID_SDK_ROOT=$HOME/android-sdk-tools
+
+    - name: Accept Android SDK licenses
+      run: yes | $ANDROID_SDK_ROOT/cmdline-tools/bin/sdkmanager --licenses
+
     - name: Build Android app with Buildozer
       run: |
         cd ${{ github.workspace }}
