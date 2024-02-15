@@ -31,6 +31,7 @@ jobs:
 
     - name: Build Android app
       run: |
+        cd /home/runner/work/OpenWeather-App/OpenWeather-App
         briefcase dev
 
     - name: Upload APK artifact
