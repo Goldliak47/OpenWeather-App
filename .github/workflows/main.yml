@@ -49,7 +49,7 @@ jobs:
       with:
         files: |
           output/android/*.apk
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.GH_TOKEN }}
         body: |
           Release notes go here. You can customize this section.
         draft: false
