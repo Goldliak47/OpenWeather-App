@@ -11,10 +11,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
       with:
         python-version: 3.12  # Use the desired Python version
 
@@ -29,7 +29,7 @@ jobs:
         briefcase dev
 
     - name: Upload APK artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: app-artifact
         path: output/android/  # Adjust the path to your built artifacts
@@ -40,17 +40,17 @@ jobs:
 
     steps:
     - name: Download APK artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         name: app-artifact
         path: output/android/  # Adjust the path to match the upload path
 
     - name: Deploy to GitHub Releases
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v3
       with:
         files: |
           output/android/*.apk
-        token: ${{ secrets.GH }}
+        token: ${{ secrets.GH_TOKEN }}
         body: |
           Release notes go here. You can customize this section.
         draft: false
