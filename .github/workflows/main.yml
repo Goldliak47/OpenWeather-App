@@ -31,6 +31,7 @@ jobs:
 
     - name: Build Android app
       run: |
+        briefcase new
         cd /home/runner/work/OpenWeather-App/OpenWeather-App
         briefcase dev
 
