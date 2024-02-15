@@ -23,7 +23,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y python3-dev  # Install Python development headers
         pip install buildozer
-
+        pip install cython
     - name: Build Android app with Buildozer
       run: |
         cd ${{ github.workspace }}
