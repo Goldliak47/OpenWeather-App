@@ -7,24 +7,22 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Use the public Linux runner
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v2
       with:
-        python-version: 3.12  # Use the desired Python version
+        python-version: 3.9  # or any version that is compatible with Buildozer
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
+        sudo apt-get update
+        sudo apt-get install -y python3-dev  # Install Python development headers
         pip install buildozer
-        pip install kivy
-        pip install requests
-        pip install distutils
 
     - name: Build Android app with Buildozer
       run: |
@@ -35,7 +33,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: app-artifact
-        path: output/android/  # Adjust the path to your built artifacts
+        path: bin/*.apk  # Adjust the path to your built APK file
 
   deploy:
     needs: build
