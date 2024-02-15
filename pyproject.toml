@@ -1,8 +1,12 @@
+[build-system]
+requires = ["briefcase>=0.3.0,<0.4.0"]
+build-backend = "briefcase:backend"
+
 [tool.briefcase.app]
 formal_name = "MyWeatherApp"
 app_name = "myweatherapp"
-bundle = "weather.app"
+bundle = "com.example"
 project_name = "MyWeatherApp"
 description = "This is a weather app"
-author = "Ali Raza"
+author = "John Doe"
 license = "MIT"
