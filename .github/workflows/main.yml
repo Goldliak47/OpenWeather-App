@@ -25,9 +25,12 @@ jobs:
         pip install kivy
         pip install requests
 
+    - name: Provide formal name for the Briefcase app
+      run: |
+        echo "MyWeatherApp" | briefcase new
+
     - name: Build Android app
       run: |
-        briefcase new
         briefcase dev
 
     - name: Upload APK artifact
