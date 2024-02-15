@@ -6,6 +6,3 @@ project_name = "MyWeatherApp"
 description = "This is a weather app"
 author = "John Doe"
 license = "MIT"
-
-[tool.briefcase.app.icons]
-icon = "path/to/your/icon.png"
