@@ -27,7 +27,7 @@ jobs:
 
     - name: Provide formal name for the Briefcase app
       run: |
-        echo -e "MyWeatherApp\nmyweatherapp\ncom.app\nMyWeatherApp\nThis is a weather app\nAli Raza\ngoldliak47@gmail.com\nhttps://app.com/myweatherapp" | briefcase new
+        echo -e "MyWeatherApp\nmyweatherapp\ncom.app\nMyWeatherApp\nThis is a weather app\nAli Raza\ngoldliak47@gmail.com\nhttps://app.com/myweatherapp\n4" | briefcase new
 
     - name: Build Android app
       run: |
