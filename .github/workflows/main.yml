@@ -24,12 +24,13 @@ jobs:
         pip install buildozer
         pip install kivy
         pip install requests
+        pip install distutils
 
     - name: Build Android app with Buildozer
       run: |
         cd ${{ github.workspace }}
         buildozer android debug
-        
+
     - name: Upload APK artifact
       uses: actions/upload-artifact@v3
       with:
