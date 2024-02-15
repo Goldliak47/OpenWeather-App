@@ -1,0 +1,52 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main  # Change this to your main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Use the public Linux runner
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8  # Use the desired Python version
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install kivy requests  # Add other dependencies as needed
+
+    - name: Build APK
+      run: |
+        pyinstaller --onefile main.py  # Example for PyInstaller
+
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: app-artifact
+        path: dist/  # Adjust the path to your built artifacts
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download APK artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: app-artifact
+        path: dist/  # Adjust the path to match the upload path
+
+    - name: Deploy to GitHub Releases
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          dist/*.apk
+        token: ${{ secrets.GITHUB_TOKEN }}
