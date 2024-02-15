@@ -25,6 +25,7 @@ jobs:
 
     - name: Build Android app
       run: |
+        briefcase new
         briefcase dev
 
     - name: Upload APK artifact
