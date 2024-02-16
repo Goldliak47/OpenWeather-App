@@ -56,7 +56,7 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: app-artifact
-        path: output/android/  # Adjust the path to match the upload path
+        path: output/android/  
 
     - name: Deploy to GitHub Releases
       uses: softprops/action-gh-release@v3
