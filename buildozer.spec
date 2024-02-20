@@ -12,3 +12,4 @@ directory = /home/runner/.buildozer
 
 # Android specific settings
 android.permissions = INTERNET
+android.accept_licenses = True
