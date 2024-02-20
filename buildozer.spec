@@ -2,24 +2,25 @@
 title = MyWeatherApp
 package.name = myweatherapp
 package.domain = com.example
+source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 version = 1.0.0
 
-[buildozer]
-# Set the buildozer directory to store dependencies
-directory = /home/runner/.buildozer
+# Kivy version required by the app
+osx.python_version = 3.8.10
 
 # Android specific settings
-package.name = myweatherapp
-package.domain = com.example
-package.source = .
-
-# Specify the version of Build-Tools
-android.build_tools_version = 30.0.3
-
-# Android permissions
+osx.python_version = 3.8.10
 android.permissions = INTERNET
 
-# Kivy version to use in the APK
-# (This version should match the one specified in [app] section)
-p4a.branch = 2.0.0
+# Add additional requirements if needed
+requirements = python3,kivy,requests
+
+# Specify Android SDK version
+android.api = 30
+
+# Specify Android SDK tools version
+android.sdk = 30.0.3
+
+# Specify Android NDK version
+android.ndk = 21.4.7075529
