@@ -1,70 +1,48 @@
-name: Build and Deploy
+name: CI-CD
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 0 1,15 * *'
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.9
+      # used to cache dependencies with a timeout
+      - name: Get Date
+        id: get-date
+        run: |
+          echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
+        shell: bash
 
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y python3-dev build-essential
-        pip install buildozer cython
+      - name: Cache Buildozer global directory
+        uses: actions/cache@v2
+        with:
+          path: .buildozer_global
+          key: buildozer-global-${{ hashFiles('buildozer.spec') }} # Replace with your path
 
-    - name: Set up Android SDK
-      run: |
-        mkdir -p $HOME/android-sdk/cmdline-tools
-        wget -q "https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip" -O android-sdk-tools.zip
-        unzip -q android-sdk-tools.zip -d $HOME/android-sdk/cmdline-tools
-        export ANDROID_SDK_ROOT=$HOME/android-sdk
-        export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin
+      - uses: actions/cache@v2
+        with:
+          path: .buildozer
+          key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
 
-    - name: Update PATH
-      run: echo "export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin" >> $HOME/.bashrc
+      - name: Build with Buildozer
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
+        with:
+          command: buildozer android debug
+          buildozer_version: master
 
-    - name: Accept Android SDK licenses
-      run: yes | sdkmanager --licenses
-
-    - name: Build Android app with Buildozer
-      run: buildozer android debug
-
-    - name: Upload APK artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: app-artifact
-        path: bin/*.apk
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Download APK artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: app-artifact
-        path: output/android/  
-
-    - name: Deploy to GitHub Releases
-      uses: softprops/action-gh-release@v3
-      with:
-        files: |
-          output/android/*.apk
-        token: ${{ secrets.GH_TOKEN }}
-        body: |
-          Release notes go here. You can customize this section.
-        draft: false
-        prerelease: false
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: package
+          path: ${{ steps.buildozer.outputs.filename }}
