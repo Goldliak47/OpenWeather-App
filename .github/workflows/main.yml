@@ -33,14 +33,16 @@ jobs:
           path: .buildozer
           key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
 
-      - name: Install Android Build Tools
+      - name: Install Android SDK
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential
-          sudo apt-get install -y default-jre
-          sudo apt-get install -y default-jdk
-          echo "y" | sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" >/dev/null
-          export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools
+          sudo apt-get install -y openjdk-8-jdk
+          wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip -O sdk-tools.zip
+          unzip -qq sdk-tools.zip -d $HOME/android-sdk
+          echo "export ANDROID_HOME=$HOME/android-sdk" >> $HOME/.bashrc
+          echo "export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools" >> $HOME/.bashrc
+          source $HOME/.bashrc
+          yes | sdkmanager --licenses >/dev/null
 
       - name: Build with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
