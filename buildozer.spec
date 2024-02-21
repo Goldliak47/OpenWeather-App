@@ -1,5 +1,7 @@
 [app]
 
+android.sdk_tools_version = 35.0.0-rc1
+
 # Title of your application
 title = Weather App
 

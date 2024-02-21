@@ -1,48 +1,56 @@
-name: Build and Deploy Android App
+name: CI-CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 0 1,15 * *'
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Install required tools
-        uses: mox/setup-android-sdk@v1
-        with:
-          sdk_root: <path/to/sdk>
-          ndk_version: <ndk_version> # Optional
-          packages:
-            build-tools;35.0.0-rc1 # Replace with your version if needed
-
-      - name: Check build-tools folder
+      - name: Get Date
+        id: get-date
         run: |
-          if [ ! -d "$ANDROID_HOME/build-tools" ]; then
-            echo "Build-tools folder not found. Please install required tools."
-            exit 1
-          fi
-
-      - name: Install Buildozer
-        run: pip install buildozer
-
-      - name: Update buildozer.spec
-        run: |
-          echo 'android.sdk_tools_version = 35.0.0-rc1' >> buildozer.spec 
+          echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
+        shell: bash
 
       - name: Cache Buildozer global directory
-        uses: actions/cache@v3
+        uses: actions/cache@v2
         with:
           path: .buildozer_global
-          key: ${{ runner.os }}-buildozer-${{ hashFiles('buildozer.spec') }}
+          key: buildozer-global-${{ hashFiles('buildozer.spec') }}
+
+      - uses: actions/cache@v2
+        with:
+          path: .buildozer
+          key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
+
+      - name: Install Android SDK
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-8-jdk
+          sudo apt-get install buildozer python3-pip libstdc++-6
+          pip install --user buildozer androidsdklib2 psutil-linux
+          wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip -O sdk-tools.zip
+          unzip -qq sdk-tools.zip -d $HOME/android-sdk
+          echo "export ANDROID_HOME=$HOME/android-sdk" >> $HOME/.bashrc
+          echo "export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools" >> $HOME/.bashrc
+          source $HOME/.bashrc
+          yes | sdkmanager --licenses
 
       - name: Build with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
         with:
+          command: sdk.dir = /path/to/your/android-sdk
           command: buildozer android debug
           buildozer_version: master
 
