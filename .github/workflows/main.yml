@@ -37,8 +37,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y openjdk-8-jdk
-          sudo apt-get install buildozer python3-pip libstdc++-6
           pip install --user buildozer androidsdklib2 psutil-linux
+          sudo apt-get install buildozer python3-pip libstdc++-6
           wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip -O sdk-tools.zip
           unzip -qq sdk-tools.zip -d $HOME/android-sdk
           echo "export ANDROID_HOME=$HOME/android-sdk" >> $HOME/.bashrc
