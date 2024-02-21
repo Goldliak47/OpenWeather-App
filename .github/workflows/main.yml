@@ -50,8 +50,9 @@ jobs:
         uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
         with:
-          command: sdk.dir = /path/to/your/android-sdk
-          command: buildozer android debug
+          command: |
+           sdk.dir = /path/to/your/android-sdk
+           buildozer android debug
           buildozer_version: master
 
       - name: Upload artifacts
