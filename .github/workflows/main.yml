@@ -17,7 +17,7 @@ jobs:
           sdk_root: <path/to/sdk>
           ndk_version: <ndk_version> # Optional
           packages:
-            - build-tools;35.0.0-rc1 # Replace with your version if needed
+            build-tools;35.0.0-rc1 # Replace with your version if needed
 
       - name: Check build-tools folder
         run: |
