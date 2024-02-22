@@ -21,7 +21,7 @@ source.include_exts = py
 version = 1.0.0
 
 # Application requirements
-requirements = python3,kivy,requests
+requirements = python3,kivy,requests,andriod
 
 # Android specific settings
 android.permissions = INTERNET
@@ -33,7 +33,9 @@ orientation = portrait
 android.presplash_lottie = "42369-weather-wind.json"
 
 # Target Android API
-android.api = 28
+android.api = 33
+
+android.minapi = 21
 
 # Architecture to build for
 android.arch = armeabi-v7a
@@ -48,3 +50,5 @@ log_level = 2
 
 # Display warning if run as root
 warn_on_root = 1
+
+android.sdk = /path/to/your/android-sdk
