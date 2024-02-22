@@ -34,6 +34,14 @@ jobs:
         sudo apt-get install -y python3-pip libssl-dev libffi-dev python3-dev
         pip install buildozer cython
 
+    - name: Install Android SDK Build-Tools
+      run: |
+        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0-rc1"
+
+    - name: Accept Android SDK licenses
+      run: |
+        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+
     - name: Configure Buildozer
       run: |
         # Example of creating a basic buildozer.spec. Adjust according to your needs.
