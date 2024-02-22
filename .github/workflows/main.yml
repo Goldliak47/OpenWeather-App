@@ -32,7 +32,7 @@ jobs:
         with:
           path: .buildozer
           key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
-          
+
       - name: Install Android SDK
         run: |
             sudo apt-get update
@@ -42,9 +42,8 @@ jobs:
             echo "export ANDROID_HOME=$HOME/android-sdk" >> $HOME/.bashrc
             echo "export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools" >> $HOME/.bashrc
             source $HOME/.bashrc
-            yes | sdkmanager --licenses
+            yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
         
-
       - name: Build with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
