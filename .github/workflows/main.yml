@@ -1,10 +1,17 @@
 name: Build Python App with Buildozer
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      ANDROID_SDK_ROOT: $HOME/android-sdk
+      ANDROID_NDK_PATH: $ANDROID_SDK_ROOT/ndk/21.3.6528147
 
     steps:
     - name: Checkout code
@@ -23,9 +30,9 @@ jobs:
     - name: Install Android SDK and NDK
       run: |
         wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip
-        unzip commandlinetools-linux-7302050_latest.zip -d $HOME/android-sdk
-        echo y | $HOME/android-sdk/cmdline-tools/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "build-tools;30.0.3" "platforms;android-30" "ndk;21.3.6528147"
-        echo "export ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
+        unzip commandlinetools-linux-7302050_latest.zip -d $ANDROID_SDK_ROOT
+        echo y | $ANDROID_SDK_ROOT/cmdline-tools/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT "build-tools;30.0.3" "platforms;android-30" "ndk;21.3.6528147"
+        echo "export ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
         echo "export PATH=\$PATH:\$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:\$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_ENV
 
     - name: Install Buildozer and Dependencies
@@ -34,13 +41,17 @@ jobs:
         sudo apt-get install -y python3-pip libssl-dev libffi-dev python3-dev
         pip install buildozer cython
 
+    - name: Install Additional Dependencies
+      run: |
+        # Add commands to install any additional dependencies your app requires
+
     - name: Install Android SDK Build-Tools
       run: |
         $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0-rc1"
 
     - name: Accept Android SDK licenses
       run: |
-        echo y | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
+        expect -c 'spawn $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses; expect "y/n" { send "y\r"; exp_continue }'
 
     - name: Configure Buildozer
       run: |
@@ -48,10 +59,15 @@ jobs:
         buildozer init
         sed -i 's/log_level = 2/log_level = 1/' buildozer.spec
         sed -i 's/# android.ndk_path =/android.ndk_path = $HOME\/android-sdk\/ndk\/21.3.6528147/' buildozer.spec
+        sed -i 's/android.api = 21/android.api = 30/' buildozer.spec
 
     - name: Build the App
       run: |
-        echo y | buildozer -v android debug 
+        echo y | buildozer -v android debug
+
+    - name: Clean Up
+      run: |
+        rm -rf .buildozer
 
     - name: Upload APK
       uses: actions/upload-artifact@v2
