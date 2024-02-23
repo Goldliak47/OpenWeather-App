@@ -24,9 +24,9 @@ jobs:
       run: |
         wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip
         unzip commandlinetools-linux-7302050_latest.zip -d $HOME/android-sdk
-        echo y | $HOME/android-sdk/cmdline-tools/bin/sdkmanager --sdk_root=${ANDROID_HOME} "build-tools;30.0.3" "platforms;android-30" "ndk;21.3.6528147"
-        echo "export ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
-        echo "export PATH=\$PATH:\$ANDROID_HOME/cmdline-tools/latest/bin:\$ANDROID_HOME/platform-tools" >> $GITHUB_ENV
+        echo y | $HOME/android-sdk/cmdline-tools/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "build-tools;30.0.3" "platforms;android-30" "ndk;21.3.6528147"
+        echo "export ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
+        echo "export PATH=\$PATH:\$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:\$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_ENV
 
     - name: Install Buildozer and Dependencies
       run: |
@@ -36,11 +36,11 @@ jobs:
 
     - name: Install Android SDK Build-Tools
       run: |
-        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0-rc1"
+        $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0-rc1"
 
     - name: Accept Android SDK licenses
       run: |
-        echo y | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+        echo y | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
 
     - name: Configure Buildozer
       run: |
