@@ -24,7 +24,7 @@ jobs:
       run: |
         wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip
         unzip commandlinetools-linux-7302050_latest.zip -d $HOME/android-sdk
-        $HOME/android-sdk/cmdline-tools/bin/sdkmanager --sdk_root=${ANDROID_HOME} "build-tools;30.0.3" "platforms;android-30" "ndk;21.3.6528147" -y
+        echo y | $HOME/android-sdk/cmdline-tools/bin/sdkmanager --sdk_root=${ANDROID_HOME} "build-tools;30.0.3" "platforms;android-30" "ndk;21.3.6528147"
         echo "export ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
         echo "export PATH=\$PATH:\$ANDROID_HOME/cmdline-tools/latest/bin:\$ANDROID_HOME/platform-tools" >> $GITHUB_ENV
 
@@ -32,7 +32,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y python3-pip libssl-dev libffi-dev python3-dev
-        pip install buildozer cython -y
+        pip install buildozer cython
 
     - name: Install Android SDK Build-Tools
       run: |
@@ -40,7 +40,7 @@ jobs:
 
     - name: Accept Android SDK licenses
       run: |
-        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses -y
+        echo y | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
 
     - name: Configure Buildozer
       run: |
