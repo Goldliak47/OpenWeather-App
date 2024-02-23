@@ -1,46 +1,60 @@
-name: CI-CD
+name: Build Python App with Buildozer
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  schedule:
-    - cron: '0 0 1,15 * *'
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Get Date
-        id: get-date
-        run: |
-          echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
-        shell: bash
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
 
-      - name: Cache Buildozer global directory
-        uses: actions/cache@v2
-        with:
-          path: .buildozer_global
-          key: buildozer-global-${{ hashFiles('buildozer.spec') }}
+    - name: Install JDK
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y openjdk-11-jdk
 
-      - uses: actions/cache@v2
-        with:
-          path: .buildozer
-          key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
+    - name: Install Android SDK and NDK
+      run: |
+        wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip
+        unzip commandlinetools-linux-7302050_latest.zip -d $HOME/android-sdk
+        $HOME/android-sdk/cmdline-tools/bin/sdkmanager --sdk_root=${ANDROID_HOME} "build-tools;30.0.3" "platforms;android-30" "ndk;21.3.6528147" -y
+        echo "export ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+        echo "export PATH=\$PATH:\$ANDROID_HOME/cmdline-tools/latest/bin:\$ANDROID_HOME/platform-tools" >> $GITHUB_ENV
 
-      - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
-        with:
-          command: echo y | buildozer -v android debug
-          buildozer_version: master
+    - name: Install Buildozer and Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3-pip libssl-dev libffi-dev python3-dev
+        pip install buildozer cython -y
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: package
-          path: ${{ steps.buildozer.outputs.filename }}
+    - name: Install Android SDK Build-Tools
+      run: |
+        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0-rc1"
+
+    - name: Accept Android SDK licenses
+      run: |
+        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses -y
+
+    - name: Configure Buildozer
+      run: |
+        # Example of creating a basic buildozer.spec. Adjust according to your needs.
+        buildozer init
+        sed -i 's/log_level = 2/log_level = 1/' buildozer.spec
+        sed -i 's/# android.ndk_path =/android.ndk_path = $HOME\/android-sdk\/ndk\/21.3.6528147/' buildozer.spec
+
+    - name: Build the App
+      run: |
+        buildozer -v android debug -y
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v2
+      with:
+        name: APK
+        path: bin/*.apk
