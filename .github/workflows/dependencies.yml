@@ -1,5 +1,3 @@
-# dependencies.yml
-
 name: Install Dependencies
 
 on:

@@ -1,5 +1,3 @@
-# main.yml
-
 name: Build Python App with Buildozer
 
 on:
@@ -24,8 +22,10 @@ jobs:
       with:
         python-version: '3.8'
 
-    - name: Install Dependencies
-      uses: ./.github/workflows/dependencies.yml  # Reference the dependency installation job
+    - name: Trigger Dependency Installation
+      uses: actions/trigger-workflow@v2
+      with:
+        workflow: "Install Dependencies"
 
     - name: Install Android SDK and NDK
       run: |
