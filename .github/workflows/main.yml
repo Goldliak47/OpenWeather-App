@@ -1,3 +1,5 @@
+# main.yml
+
 name: Build Python App with Buildozer
 
 on:
@@ -22,10 +24,8 @@ jobs:
       with:
         python-version: '3.8'
 
-    - name: Install JDK
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y openjdk-11-jdk
+    - name: Install Dependencies
+      uses: ./.github/workflows/dependencies.yml  # Reference the dependency installation job
 
     - name: Install Android SDK and NDK
       run: |
@@ -35,29 +35,9 @@ jobs:
         echo y | $HOME/android-sdk/cmdline-tools/bin/sdkmanager --sdk_root=$HOME/android-sdk "build-tools;30.0.3" "platforms;android-30" "ndk;21.3.6528147"
         echo "export ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
         echo "export PATH=\$PATH:\$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:\$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_ENV
-    
-
-    - name: Install Buildozer and Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y python3-pip libssl-dev libffi-dev python3-dev
-        pip install buildozer cython
-
-    - name: Install Additional Dependencies
-      run: |
-        # Add commands to install any additional dependencies your app requires
-
-    - name: Install Android SDK Build-Tools
-      run: |
-        $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0-rc1"
-
-    - name: Accept Android SDK licenses
-      run: |
-        expect -c 'spawn $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses; expect "y/n" { send "y\r"; exp_continue }'
 
     - name: Configure Buildozer
       run: |
-        # Example of creating a basic buildozer.spec. Adjust according to your needs.
         buildozer init
         sed -i 's/log_level = 2/log_level = 1/' buildozer.spec
         sed -i 's/# android.ndk_path =/android.ndk_path = $HOME\/android-sdk\/ndk\/21.3.6528147/' buildozer.spec
