@@ -1,3 +1,5 @@
+# main.yml
+
 name: Build Python App with Buildozer
 
 on:
@@ -6,8 +8,30 @@ on:
       - main
 
 jobs:
+  install_dependencies:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y openjdk-11-jdk
+        sudo apt-get install -y python3-pip libssl-dev libffi-dev python3-dev
+        pip install buildozer cython
+
+        # Add commands to install any additional dependencies your app requires
+
+        $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0-rc1"
+
+        expect -c 'spawn $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses; expect "y/n" { send "y\r"; exp_continue }'
+
   build:
     runs-on: ubuntu-latest
+
+    needs: install_dependencies  # Ensure dependencies job is completed before starting this job
 
     env:
       ANDROID_SDK_ROOT: $HOME/android-sdk
@@ -21,11 +45,6 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.8'
-
-    - name: Trigger Dependency Installation
-      uses: actions/trigger-workflow@v2
-      with:
-        workflow: "Install Dependencies"
 
     - name: Install Android SDK and NDK
       run: |
