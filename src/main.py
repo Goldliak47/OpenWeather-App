@@ -10,6 +10,10 @@ class WeatherApp(App):
     def build(self):
         self.api_key = "04a2fa20419dafbd3d7330a04c906330"
 
+        self.username = "Goldliak47"
+        
+        self.password = "123456789"
+
         layout = BoxLayout(orientation='vertical', spacing=10, padding=10)
 
         layout.add_widget(Label(text="Enter the city name:"))
